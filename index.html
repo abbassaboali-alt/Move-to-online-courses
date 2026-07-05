@@ -568,36 +568,6 @@ function logout(){
   location.replace("https://www.prudle-education.com/log-in-out");
 }
 
-function checkAccess(){
-
-  if(location.hostname.includes("editmysite") || location.hostname.includes("weebly")){
-    return true;
-  }
-
-  const user = localStorage.getItem("username");
-
-  const role = String(
-    localStorage.getItem("role") || ""
-  ).trim().toLowerCase();
-
-  const last = localStorage.getItem("loginDate");
-  const today = new Date().toDateString();
-
-  if(!user || !role || last !== today){
-    goLogin();
-    return false;
-  }
-
-  return true;
-}
-
-if(!checkAccess()){
-  throw new Error("Access Denied");
-}
-
-window.addEventListener("pageshow",()=>{
-  checkAccess();
-});
 
 /* ================= Prevent Submit (Weebly) ================= */
 document.addEventListener("submit", function(e){
@@ -1847,5 +1817,3 @@ loadData();
 
 </body>
 </html>
-
-
