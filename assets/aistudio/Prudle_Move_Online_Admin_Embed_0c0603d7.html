@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prudle — الترحيل للدورات الأونلاين</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif}#courseFrame{width:100%;height:100vh;border:0;display:none}#accessNotice{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;background:#f4f6fb;color:#164478;font-weight:bold;padding:20px;box-sizing:border-box}</style>
+</head>
+<body>
+<div id="accessNotice">جاري التحقق من صلاحية الدخول...</div>
+<iframe id="courseFrame" title="الترحيل للدورات الأونلاين" allow="microphone; camera" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<script>
+(function(){
+  'use strict';
+  const LOGIN_URL = 'https://www.prudle-education.com/log-in-out';
+  const PAGE_URL = 'https://abbassaboali-alt.github.io/Move-to-online-courses/';
+  const frame = document.getElementById('courseFrame');
+  const notice = document.getElementById('accessNotice');
+  let leaving = false;
+  function logoutAll(){
+    if(leaving) return;
+    leaving = true;
+    frame.style.display = 'none';
+    frame.removeAttribute('src');
+    localStorage.clear();
+    sessionStorage.clear();
+    try { window.top.location.replace(LOGIN_URL); }
+    catch (_) { window.location.replace(LOGIN_URL); }
+  }
+  function checkLoginOnly(){
+    const user = (localStorage.getItem('username') || '').trim();
+    const role = (localStorage.getItem('role') || '').trim().toLowerCase();
+    const last = localStorage.getItem('loginDate');
+    const today = new Date().toDateString();
+    if (!user || role !== 'admin' || last !== today) {
+      notice.textContent = 'Authentication Required — Go to Login';
+      logoutAll();
+      return false;
+    }
+    notice.style.display = 'none';
+    frame.style.display = 'block';
+    if (!frame.getAttribute('src')) frame.src = PAGE_URL;
+    return true;
+  }
+  window.addEventListener('message', function(e){
+    if(e.data !== 'PRUDLE_LOGOUT') return;
+    if(e.source !== frame.contentWindow) return;
+    if(e.origin !== 'https://abbassaboali-alt.github.io') return;
+    logoutAll();
+  });
+  window.addEventListener('pageshow', checkLoginOnly);
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) checkLoginOnly();
+  });
+  window.addEventListener('storage', function(e){
+    if(['username','role','loginDate'].includes(e.key) || e.key === null) checkLoginOnly();
+  });
+  checkLoginOnly();
+})();
+</script>
+</body>
+</html>

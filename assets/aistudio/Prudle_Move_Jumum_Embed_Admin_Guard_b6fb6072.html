@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prudle — ترحيل فرع الجموم</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;background:#f4f6fb;font-family:Arial,sans-serif}
+#appFrame{width:100%;height:100vh;height:100dvh;border:0;display:none}
+#checking{display:flex;align-items:center;justify-content:center;min-height:100vh;color:#164478;font-weight:bold}
+</style>
+<script>
+(function(){
+'use strict';
+const LOGIN_URL='https://www.prudle-education.com/log-in-out';
+const FRAME_ORIGIN='https://abbassaboali-alt.github.io';
+const ALLOWED_PARENT_ORIGINS=new Set(['https://www.prudle-education.com','https://prudle-education.com']);
+let leaving=false;
+function logoutAll(){
+ if(leaving)return;leaving=true;
+ try{localStorage.clear();sessionStorage.clear();}catch(_){ }
+ try{window.top.location.replace(LOGIN_URL);}catch(_){window.location.replace(LOGIN_URL);}
+}
+function checkLoginOnly(){
+ if(leaving)return false;
+ let user='',role='',last='';
+ try{user=localStorage.getItem('username')||'';role=(localStorage.getItem('role')||'').trim().toLowerCase();last=localStorage.getItem('loginDate')||'';}catch(_){ }
+ if(!user||role!=='admin'||last!==new Date().toDateString()){
+  logoutAll();return false;
+ }
+ const frame=document.getElementById('appFrame');
+ const checking=document.getElementById('checking');
+ if(frame){frame.style.display='block';}
+ if(checking){checking.style.display='none';}
+ return true;
+}
+window.addEventListener('message',function(e){
+ if(e.data==='PRUDLE_LOGOUT' && (e.origin===FRAME_ORIGIN||ALLOWED_PARENT_ORIGINS.has(e.origin)) &&
+    (e.source===document.getElementById('appFrame')?.contentWindow||e.source===window.parent))logoutAll();
+});
+window.addEventListener('pageshow',checkLoginOnly);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkLoginOnly();});
+document.addEventListener('DOMContentLoaded',checkLoginOnly,{once:true});
+})();
+</script>
+</head>
+<body>
+<div id="checking">جاري التحقق من صلاحية الدخول...</div>
+<iframe id="appFrame" title="ترحيل طلاب الجموم" src="https://abbassaboali-alt.github.io/Move-to-Al-Jumum/" allow="microphone; camera" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</body>
+</html>

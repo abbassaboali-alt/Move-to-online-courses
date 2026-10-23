@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <script>
+      /* Prudle host allowlist + save-shortcut deterrent. Server-side Worker checks are authoritative. */
+      (function(){
+        'use strict';
+        const LOGIN_URL = "https://www.prudle-education.com/log-in-out";
+        const ALLOWED_HOSTS = new Set([
+          "www.prudle-education.com",
+          "prudle-education.com",
+          "abbassaboali-alt.github.io"
+        ]);
+        window.addEventListener("keydown", function(e){
+          if((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === "s") {
+            e.preventDefault();
+          }
+        }, { capture: true });
+        const hostname = location.hostname.toLowerCase();
+        const isDev = hostname === "localhost" || hostname === "127.0.0.1" || (location.port === "3000" && hostname.endsWith(".run.app"));
+        if(!isDev && (location.protocol !== "https:" || !ALLOWED_HOSTS.has(hostname))){
+          window.stop();
+          try { document.documentElement.innerHTML = ""; } catch(e){}
+          location.replace(LOGIN_URL);
+          return;
+        }
+        if(hostname === "prudle-education.com"){
+          window.stop();
+          location.replace("https://www.prudle-education.com" + location.pathname + location.search + location.hash);
+        }
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prudle — Move to Online Courses | الترحيل للدورات الأونلاين</title>
+    <meta name="description" content="Prudle student course migration system for Al-Hamdaniya Online branch with bilingual EN/AR UI and Cloudflare Worker integration." />
+    <meta property="og:title" content="Prudle — Move to Online Courses | الترحيل للدورات الأونلاين" />
+    <meta property="og:description" content="Prudle student course migration system for Al-Hamdaniya Online branch with bilingual EN/AR UI and Cloudflare Worker integration." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <script type="module" crossorigin src="./assets/index-C-nOlGIS.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Bo-XZiB6.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
